@@ -2,3 +2,5 @@
 
 cat - | sed 's/^/bbbbb /g'
 
+echo ":::: $REQUEST_METHOD"
+

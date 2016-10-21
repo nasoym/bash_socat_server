@@ -16,7 +16,7 @@ read -n $HEADER_CONTENT_LENGTH CONTENT_BODY
 REQUEST_PATH=$(echo "$REQUEST_URI" | sed 's/^\([^?]*\).*$/\1/g')
 
 if [[ -f "./path${REQUEST_PATH}" ]];then
-    echo "$CONTENT_BODY" | ./path${REQUEST_PATH}
+    echo "$CONTENT_BODY" | . ./path${REQUEST_PATH}
 else
   echo "HTTP/1.0 200 OK"
   # echo "Cache-Control : no-cache, private"
