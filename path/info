@@ -1,5 +1,7 @@
 #!/bin/bash
 
 set | grep REQUEST
+set | grep SOCAT
 
+echo "PID:$$"
 
