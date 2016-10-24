@@ -13,4 +13,4 @@ esac; done; shift $(( OPTIND - 1 ))
 socat \
   $VERBOSE_OPTIONS \
   TCP-LISTEN:${PORT},crlf,reuseaddr,fork \
-  EXEC:"${SERVICE}"
+  EXEC:"${SERVICE} -p ./path"
