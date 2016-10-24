@@ -1,7 +1,23 @@
 #!/bin/bash
 
-set | grep REQUEST
-set | grep SOCAT
+# RESPONSE+="$(upper abcdef)"
 
-echo "PID:$$"
+RESPONSE+="PID: $$
+"
+RESPONSE+="REQUEST HEADERS
+"
+RESPONSE+="$(set | grep "REQUEST_")
+"
+# RESPONSE+="$(set | grep SOCAT)
+# "
+RESPONSE+="boooo: ${REQUEST_HEADER_USER_AGENT}
+"
+# RESPONSE+="$(upper abcdef)"
 
+echo_response_status_line
+echo_response_default_headers
+echo "Content-Length : ${#RESPONSE}"
+echo
+echo "${RESPONSE}"
+
+exit 3
