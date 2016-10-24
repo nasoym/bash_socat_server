@@ -1,6 +1,7 @@
 #!/bin/bash
 
-while getopts "s" OPTIONS; do case $OPTIONS in
+while getopts "p:s" OPTIONS; do case $OPTIONS in
+  p) SEARCH_PATH="$OPTARG" ;;
   s) SHORT="1" ;;
   *) exit 1 ;;
 esac; done; shift $(( OPTIND - 1 ))
@@ -16,20 +17,46 @@ fi
 REQUEST_PATH="${REQUEST_URI/%\?*/}"
 REQUEST_QUERIES="${REQUEST_URI/#*\?/}"
 
-if [[ -f "./path${REQUEST_PATH}" ]];then
+function echo_response_status_line() { 
+  STATUS_CODE=${1-200}
+  STATUS_TEXT=${2-OK}
+  echo "HTTP/1.0 ${STATUS_CODE} ${STATUS_TEXT}"
+}
 
-  RESPONSE_CONTENT=$(echo "$REQUEST_CONTENT" | . ./path${REQUEST_PATH})
-  echo "HTTP/1.0 200 OK"
-  echo "Cache-Control : no-cache, private"
-  echo "Content-Length : ${#RESPONSE_CONTENT}"
+function echo_response_default_headers() { 
+  echo "Date: $(date -u "+%a, %d %b %Y %T GMT")"
+  echo "Server: Socat Bash"
+}
 
-  echo "Date: $(date)"
-  echo
-  echo "${RESPONSE_CONTENT}"
+REQUEST_PATH_SEGMENT="${REQUEST_PATH}"
+while [[ -n "$REQUEST_PATH_SEGMENT" ]] && [[ "$REQUEST_PATH_SEGMENT" != "/" ]] && [[ -z "$MATCHING_FILE" ]]; do
+  MATCHING_FILE="$(find . -type f -path "${SEARCH_PATH}${REQUEST_PATH_SEGMENT}" | head -n1)"
+  if [[ -n "$MATCHING_FILE" ]];then
+    REQUEST_SUBPATH=${REQUEST_PATH/#$REQUEST_PATH_SEGMENT/}
+    break
+  fi
+  REQUEST_PATH_SEGMENT="$( dirname $REQUEST_PATH_SEGMENT)"
+done
+unset REQUEST_PATH_SEGMENT
+
+if [[ -n "$MATCHING_FILE" ]];then
+
+  RESPONSE_CONTENT=$(echo "$REQUEST_CONTENT" | . ${MATCHING_FILE})
+  if [[ $? = 3 ]] && [[ "$RESPONSE_CONTENT" =~ ^HTTP\/[0-9]+\.[0-9]+\ [0-9]+ ]];then
+    # insert headers ?
+    echo "${RESPONSE_CONTENT}"
+  else
+    echo_response_status_line  
+    echo_response_default_headers
+    # use ending for content type
+    echo "Content-Length : ${#RESPONSE_CONTENT}"
+    echo
+    echo "${RESPONSE_CONTENT}"
+  fi
 
 else
-  echo "HTTP/1.0 200 OK"
-  echo "Date: $(date)"
+  echo_response_status_line 404 "NOT FOUND"
+  echo_response_default_headers
   echo
 fi
 
