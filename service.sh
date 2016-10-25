@@ -1,8 +1,7 @@
 #!/bin/bash
 
-while getopts "p:s" OPTIONS; do case $OPTIONS in
+while getopts "p:" OPTIONS; do case $OPTIONS in
   p) SEARCH_PATH="$OPTARG" ;;
-  s) SHORT="1" ;;
   *) exit 1 ;;
 esac; done; shift $(( OPTIND - 1 ))
 
