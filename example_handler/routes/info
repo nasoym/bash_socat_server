@@ -4,9 +4,13 @@ RESPONSE+="PID: $$
 "
 RESPONSE+="$(set | grep "REQUEST_")
 "
-# RESPONSE+="$(set | grep SOCAT)
-# "
+RESPONSE+="$(set | grep SOCAT)
+"
+RESPONSE+="-----
+"
 RESPONSE+="1234567890"
+
+RESPONSE="$(echo -n "$RESPONSE" | sed 's/$/\r/')"
 
 echo_response_status_line
 echo_response_default_headers
