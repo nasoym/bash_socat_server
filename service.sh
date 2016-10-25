@@ -22,13 +22,13 @@ fi
 function echo_response_status_line() { 
   STATUS_CODE=${1-200}
   STATUS_TEXT=${2-OK}
-  echo "HTTP/1.0 ${STATUS_CODE} ${STATUS_TEXT}"
+  echo -e "HTTP/1.0 ${STATUS_CODE} ${STATUS_TEXT}\r"
 }
 
 function echo_response_default_headers() { 
-  echo "Date: $(date -u "+%a, %d %b %Y %T GMT")"
-  echo "Server: $(cat version.txt)"
-  echo "Connection: close"
+  echo -e "Date: $(date -u "+%a, %d %b %Y %T GMT")\r"
+  echo -e "Server: $(cat version.txt)\r"
+  echo -e "Connection: close\r"
 }
 
 REQUEST_PATH_SEGMENT="${REQUEST_PATH}"
@@ -61,14 +61,14 @@ if [[ -n "$MATCHING_ROUTE_FILE" ]];then
   else
     echo_response_status_line  
     echo_response_default_headers
-    echo "Content-Type: text/html"
-    echo "Content-Length: ${#RESPONSE_CONTENT}"
-    echo
+    echo -e "Content-Type: text/html\r"
+    echo -e "Content-Length: ${#RESPONSE_CONTENT}\r"
+    echo -e "\r"
     echo "${RESPONSE_CONTENT}"
   fi
 else
   echo_response_status_line 404 "NOT FOUND"
   echo_response_default_headers
-  echo
+  echo -e "\r"
 fi
 

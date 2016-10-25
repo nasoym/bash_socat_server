@@ -15,6 +15,6 @@ esac; done; shift $(( OPTIND - 1 ))
 
 socat \
   $VERBOSE_OPTIONS \
-  TCP-LISTEN:${PORT},crlf,reuseaddr,fork \
+  TCP-LISTEN:${PORT},reuseaddr,fork \
   EXEC:"${SERVICE} ${ROUTES_PATH} ${DEFAULT_ROUTE_HANDLER}"
 

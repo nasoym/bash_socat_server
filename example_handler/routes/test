@@ -1,19 +1,13 @@
 #!/bin/bash
-echo "----------------" >&2
 
 RESPONSE=""
 RESPONSE+="Test
 "
-echo -n "1 $RESPONSE" | xxd >&2
-echo "1 ${#RESPONSE}" >&2
-RESPONSE="$(echo -n "$RESPONSE" | sed 's/$/\r/')"
-echo -n "2 $RESPONSE" | xxd >&2
-echo "2 ${#RESPONSE}" >&2
 
 echo_response_status_line
 echo_response_default_headers
-echo "Content-Type: text/plain; charset=utf-8"
-echo "Content-Length: ${#RESPONSE}"
-echo
-echo "${RESPONSE}"
+echo -e "Content-Type: text/plain; charset=utf-8\r"
+echo -e "Content-Length: ${#RESPONSE}\r"
+echo -e "\r"
 
+echo "${RESPONSE}"
