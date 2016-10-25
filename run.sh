@@ -11,7 +11,9 @@ esac; done; shift $(( OPTIND - 1 ))
 : ${SERVICE:="./service.sh"}
 : ${VERBOSE_OPTIONS:=""}
 
+: ${SERVICE_OPTIONS:="$@"}
+
 socat \
   $VERBOSE_OPTIONS \
   TCP-LISTEN:${PORT},crlf,reuseaddr,fork \
-  EXEC:"${SERVICE} -p ./path"
+  EXEC:"${SERVICE} ${SERVICE_OPTIONS}"
