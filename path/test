@@ -1,8 +1,0 @@
-#!/bin/bash
-
-export RESPONSE_HEADER_Foo="abcdef"
-
-echo "dddd" >&2
-
-echo "hello world"
-echo "foo"

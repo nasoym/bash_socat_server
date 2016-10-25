@@ -1,23 +1,17 @@
 #!/bin/bash
 
-# RESPONSE+="$(upper abcdef)"
-
 RESPONSE+="PID: $$
-"
-RESPONSE+="REQUEST HEADERS
 "
 RESPONSE+="$(set | grep "REQUEST_")
 "
 # RESPONSE+="$(set | grep SOCAT)
 # "
-RESPONSE+="boooo: ${REQUEST_HEADER_USER_AGENT}
-"
-# RESPONSE+="$(upper abcdef)"
+RESPONSE+="1234567890"
 
 echo_response_status_line
 echo_response_default_headers
-echo "Content-Length : ${#RESPONSE}"
+echo "Content-Type: text/plain; charset=utf-8"
+echo "Content-Length: ${#RESPONSE}"
 echo
 echo "${RESPONSE}"
 
-exit 3
