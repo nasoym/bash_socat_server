@@ -3,9 +3,13 @@
 This is an experiment to setup a simple http server with
 bash scripts and socat.
 
+## options
+* -p <port number> : port
+* -r <path> : path for route handlers
+* -d <path> : path to default route handler script
+* -v : turn on verbose logging
 
 ## todos / issues /questions
-* how to handle response headers from a script ? 
 * avoid injection via request headers
 
 
