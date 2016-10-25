@@ -1,7 +1,8 @@
 #!/bin/bash
 
-while getopts "p:" OPTIONS; do case $OPTIONS in
-  p) SEARCH_PATH="$OPTARG" ;;
+while getopts "r:d:" OPTIONS; do case $OPTIONS in
+  r) ROUTES_PATH="$OPTARG" ;;
+  d) DEFAULT_ROUTE_HANDLER="$OPTARG" ;;
   *) exit 1 ;;
 esac; done; shift $(( OPTIND - 1 ))
 
@@ -14,7 +15,9 @@ if [[ -n "$REQUEST_HEADER_CONTENT_LENGTH" ]] && [[ "$REQUEST_HEADER_CONTENT_LENG
 fi
 
 REQUEST_PATH="${REQUEST_URI/%\?*/}"
-REQUEST_QUERIES="${REQUEST_URI/#*\?/}"
+if [[ "${REQUEST_URI}" =~ \? ]]; then
+  REQUEST_QUERIES="${REQUEST_URI/#*\?/}"
+fi
 
 function echo_response_status_line() { 
   STATUS_CODE=${1-200}
@@ -24,35 +27,45 @@ function echo_response_status_line() {
 
 function echo_response_default_headers() { 
   echo "Date: $(date -u "+%a, %d %b %Y %T GMT")"
-  echo "Server: Socat Bash"
+  echo "Server: $(cat version.txt)"
+  echo "Connection: close"
 }
 
 REQUEST_PATH_SEGMENT="${REQUEST_PATH}"
-while [[ -n "$REQUEST_PATH_SEGMENT" ]] && [[ "$REQUEST_PATH_SEGMENT" != "/" ]] && [[ -z "$MATCHING_FILE" ]]; do
-  MATCHING_FILE="$(find . -type f -path "${SEARCH_PATH}${REQUEST_PATH_SEGMENT}" | head -n1)"
-  if [[ -n "$MATCHING_FILE" ]];then
-    REQUEST_SUBPATH=${REQUEST_PATH/#$REQUEST_PATH_SEGMENT/}
+until [[ -z "$REQUEST_PATH_SEGMENT" ]] ; do
+  if [[ -f "${ROUTES_PATH}${REQUEST_PATH_SEGMENT}" ]];then
+    MATCHING_ROUTE_FILE="${ROUTES_PATH}${REQUEST_PATH_SEGMENT}"
+    REQUEST_SUBPATH="${REQUEST_PATH/#$REQUEST_PATH_SEGMENT/}"
     break
   fi
-  REQUEST_PATH_SEGMENT="$( dirname $REQUEST_PATH_SEGMENT)"
+  if [[ "${REQUEST_PATH_SEGMENT}" =~ /$ ]];then
+    REQUEST_PATH_SEGMENT="${REQUEST_PATH_SEGMENT/%\//}"
+  else
+    REQUEST_PATH_SEGMENT="$(dirname $REQUEST_PATH_SEGMENT)"
+  fi
 done
 unset REQUEST_PATH_SEGMENT
 
-if [[ -n "$MATCHING_FILE" ]];then
+if [[ -z "$MATCHING_ROUTE_FILE" ]];then
+    if [[ -f "${DEFAULT_ROUTE_HANDLER}" ]]; then
+      MATCHING_ROUTE_FILE="${DEFAULT_ROUTE_HANDLER}"
+    elif [[ -f "${ROUTES_PATH}/${DEFAULT_ROUTE_HANDLER}" ]]; then
+      MATCHING_ROUTE_FILE="${ROUTES_PATH}/${DEFAULT_ROUTE_HANDLER}"
+    fi
+fi
 
-  RESPONSE_CONTENT=$(echo "$REQUEST_CONTENT" | . ${MATCHING_FILE})
-  if [[ $? = 3 ]] && [[ "$RESPONSE_CONTENT" =~ ^HTTP\/[0-9]+\.[0-9]+\ [0-9]+ ]];then
-    # insert headers ?
+if [[ -n "$MATCHING_ROUTE_FILE" ]];then
+  RESPONSE_CONTENT="$(echo "$REQUEST_CONTENT" | . ${MATCHING_ROUTE_FILE})"
+  if [[ "$RESPONSE_CONTENT" =~ ^HTTP\/[0-9]+\.[0-9]+\ [0-9]+ ]];then
     echo "${RESPONSE_CONTENT}"
   else
     echo_response_status_line  
     echo_response_default_headers
-    # use ending for content type
-    echo "Content-Length : ${#RESPONSE_CONTENT}"
+    echo "Content-Type: text/html"
+    echo "Content-Length: ${#RESPONSE_CONTENT}"
     echo
     echo "${RESPONSE_CONTENT}"
   fi
-
 else
   echo_response_status_line 404 "NOT FOUND"
   echo_response_default_headers

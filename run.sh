@@ -1,18 +1,20 @@
 #!/bin/bash
 
-while getopts "p:s:d" OPTIONS; do case $OPTIONS in
-  d) VERBOSE_OPTIONS="-vv" ;;
+while getopts "d:p:r:v" OPTIONS; do case $OPTIONS in
+  v) VERBOSE_OPTIONS="-vv" ;;
   p) PORT="$OPTARG" ;;
-  s) SERVICE_PATH="$OPTARG" ;;
+  r) ROUTES_PATH=" -r $OPTARG" ;;
+  d) DEFAULT_ROUTE_HANDLER="-d $OPTARG" ;;
   *) exit 1 ;;
 esac; done; shift $(( OPTIND - 1 ))
 
 : ${PORT:="8080"}
-: ${SERVICE:="./service.sh"}
 : ${VERBOSE_OPTIONS:=""}
-: ${SERVICE_PATH:="./path"}
+: ${SERVICE:="./service.sh"}
+: ${ROUTES_PATH:=" -r ./example_handler/routes"}
 
 socat \
   $VERBOSE_OPTIONS \
   TCP-LISTEN:${PORT},crlf,reuseaddr,fork \
-  EXEC:"${SERVICE} -p ${SERVICE_PATH}"
+  EXEC:"${SERVICE} ${ROUTES_PATH} ${DEFAULT_ROUTE_HANDLER}"
+
