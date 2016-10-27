@@ -8,10 +8,10 @@ WORKDIR /socat_server
 
 ADD *.sh /socat_server/
 ADD version.txt /socat_server/
-ADD example_handler /handlers
+ADD example_handlers /handlers
 
 EXPOSE 8080
 
 ENTRYPOINT ["./run.sh"]
-CMD ["-r /handlers/routes", "-d /handlers/default"]
+CMD ["-r /handlers", "-d /handlers/default"]
 
