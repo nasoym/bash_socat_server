@@ -26,7 +26,9 @@ function echo_response_status_line() {
 }
 
 function echo_response_default_headers() { 
+  # DATE=$(date +"%a, %d %b %Y %H:%M:%S %Z")
   echo -e "Date: $(date -u "+%a, %d %b %Y %T GMT")\r"
+  echo -e "Expires: $(date -u "+%a, %d %b %Y %T GMT")\r"
   echo -e "Server: $(cat version.txt)\r"
   echo -e "Connection: close\r"
 }
@@ -67,7 +69,7 @@ if [[ -n "$MATCHING_ROUTE_FILE" ]];then
     echo "${RESPONSE_CONTENT}"
   fi
 else
-  echo_response_status_line 404 "NOT FOUND"
+  echo_response_status_line 404 "Not Found"
   echo_response_default_headers
   echo -e "\r"
 fi
