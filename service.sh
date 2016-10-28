@@ -29,7 +29,9 @@ export REQUEST_METHOD
 export REQUEST_URI 
 export REQUEST_HTTP_VERSION
 
-. ./read_headers_to_vars.sh
+export SERVER_VERSION="$(cat $(dirname $0)/version.txt)"
+
+. $(dirname $0)/read_headers_to_vars.sh
 
 if [[ -n "$REQUEST_HEADER_CONTENT_LENGTH" ]] && [[ "$REQUEST_HEADER_CONTENT_LENGTH" -gt "0" ]];then
   read -r -d '' -n "$REQUEST_HEADER_CONTENT_LENGTH" REQUEST_CONTENT
@@ -58,7 +60,7 @@ function echo_response_default_headers() {
   # DATE=$(date +"%a, %d %b %Y %H:%M:%S %Z")
   echo -e "Date: $(date -u "+%a, %d %b %Y %T GMT")\r"
   echo -e "Expires: $(date -u "+%a, %d %b %Y %T GMT")\r"
-  echo -e "Server: $(cat version.txt)\r"
+  echo -e "Server: $SERVER_VERSION\r"
   echo -e "Connection: close\r"
 }
 export -f echo_response_default_headers
