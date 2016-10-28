@@ -2,13 +2,16 @@
 
 RESPONSE+="PID: $$
 "
-RESPONSE+="$(set | grep "REQUEST_")
-"
 RESPONSE+="$(set | grep SOCAT)
 "
-RESPONSE+="-----
+RESPONSE+="$(set | grep "REQUEST_")
 "
-RESPONSE+="1234567890"
+# RESPONSE+="-----
+# "
+# RESPONSE+="1234567890
+# "
+RESPONSE+="COMMAND: $@
+"
 
 echo_response_status_line
 echo_response_default_headers
