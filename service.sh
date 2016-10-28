@@ -1,5 +1,11 @@
 #!/bin/bash
 
+function urldecode() {
+  INPUT="$@"
+  url_encoded="${INPUT//+/ }"
+  printf '%b\n' "${url_encoded//%/\\x}"
+}
+
 while getopts "r:d:" OPTIONS; do case $OPTIONS in
   r) ROUTES_PATH="$OPTARG" ;;
   d) DEFAULT_ROUTE_HANDLER="$OPTARG" ;;
@@ -19,7 +25,14 @@ fi
 
 export REQUEST_PATH="${REQUEST_URI/%\?*/}"
 if [[ "${REQUEST_URI}" =~ \? ]]; then
-  REQUEST_QUERIES="${REQUEST_URI/#*\?/}"
+  export REQUEST_QUERIES="${REQUEST_URI#*\?}"
+  COMMAND_QUERIES=""
+  for I in $(tr '&' '\n' <<<"$REQUEST_QUERIES"); do
+    QUERY_KEY=${I//\=*/}
+    [[ "${I}" =~ = ]] && QUERY_VALUE=" $(urldecode ${I//*\=/})"
+    declare -x "REQUEST_QUERY_${QUERY_KEY}"="$QUERY_VALUE"
+    COMMAND_QUERIES+=" --$QUERY_KEY$QUERY_VALUE"
+  done
 fi
 
 function echo_response_status_line() { 
@@ -60,7 +73,7 @@ if [[ -z "$MATCHING_ROUTE_FILE" ]];then
 fi
 
 if [[ -n "$MATCHING_ROUTE_FILE" ]];then
-  RESPONSE_CONTENT="$(echo "$REQUEST_CONTENT" | . ${MATCHING_ROUTE_FILE})"
+  RESPONSE_CONTENT="$(echo "$REQUEST_CONTENT" | ${MATCHING_ROUTE_FILE} $COMMAND_QUERIES $(urldecode ${REQUEST_SUBPATH//\// }))"
   if [[ "$RESPONSE_CONTENT" =~ ^HTTP\/[0-9]+\.[0-9]+\ [0-9]+ ]];then
     echo "${RESPONSE_CONTENT}"
   else
