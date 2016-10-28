@@ -11,7 +11,8 @@ esac; done; shift $(( OPTIND - 1 ))
 : ${PORT:="8080"}
 : ${VERBOSE_OPTIONS:=""}
 : ${SERVICE:="./service.sh"}
-: ${ROUTES_PATH:=" -r ./example_handler/routes"}
+: ${ROUTES_PATH:=" -r ./example_handlers"}
+: ${DEFAULT_ROUTE_HANDLER:=" -d ./example_handlers/default"}
 
 socat \
   $VERBOSE_OPTIONS \
