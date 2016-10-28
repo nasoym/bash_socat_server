@@ -40,12 +40,12 @@ fi
 export REQUEST_PATH="${REQUEST_URI/%\?*/}"
 if [[ "${REQUEST_URI}" =~ \? ]]; then
   export REQUEST_QUERIES="${REQUEST_URI#*\?}"
-  COMMAND_QUERIES=""
+  COMMAND_ARGUMENTS=()
   for I in $(tr '&' '\n' <<<"$REQUEST_QUERIES"); do
     QUERY_KEY=${I//\=*/}
-    [[ "${I}" =~ = ]] && QUERY_VALUE=" $(urldecode ${I//*\=/})"
-    declare -x "REQUEST_QUERY_${QUERY_KEY}"="$QUERY_VALUE"
-    COMMAND_QUERIES+=" --$QUERY_KEY$QUERY_VALUE"
+    [[ "${I}" =~ = ]] && QUERY_VALUE="$(urldecode ${I//*\=/})"
+    COMMAND_ARGUMENTS+=("--$QUERY_KEY")
+    COMMAND_ARGUMENTS+=("$QUERY_VALUE")
   done
 fi
 
@@ -89,7 +89,7 @@ if [[ -z "$MATCHING_ROUTE_FILE" ]];then
 fi
 
 if [[ -n "$MATCHING_ROUTE_FILE" ]];then
-  RESPONSE_CONTENT="$(echo "$REQUEST_CONTENT" | ${MATCHING_ROUTE_FILE} $COMMAND_QUERIES $(urldecode ${REQUEST_SUBPATH//\// }))"
+  RESPONSE_CONTENT="$(echo "$REQUEST_CONTENT" | $MATCHING_ROUTE_FILE "${COMMAND_ARGUMENTS[@]}" $(urldecode ${REQUEST_SUBPATH//\// }))"
   if [[ $? -eq 1 ]];then
     echo_response_status_line 500 "Internal Server Error"
     echo_response_default_headers

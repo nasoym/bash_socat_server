@@ -1,39 +1,10 @@
 #!/bin/bash
 
-function assert() {
-  [[ -z "$1" ]] && { echo "option ${OPTARG} requires an argument" >&2 ; exit 1; }
-}
-
-# echo "arguments $@
-# "
-
-while getopts ":-:" options; 
-do 
-  unset VALUE
-  if [[ ${!OPTIND} =~ ^-$ ]] || [[ ${!OPTIND} =~ ^[^-] ]];then
-    VALUE=${!OPTIND}
-    OPTIND=$((OPTIND+1))
-  fi
-  case $options in
-  *) case "${OPTARG}" in
-      f|foo) assert $VALUE; FOO=$VALUE ;;
-      v) VERBOSE=1 ;;
-      *) echo ":$OPTARG<:>$VALUE<" ;;
-    esac;;
-esac; done; shift $((OPTIND - 1))
-
-echo "arguments $@
+echo "$0 arguments before: $@
 "
-echo "foo:>$FOO<
-"
+echo "$0 arguments1: $1"
+echo "$0 arguments2: $2"
+echo "$0 arguments3: $3"
 
-if [[ $VERBOSE -eq 1 ]];then
-  echo "verbose: $FOO $1"
-  echo "verbose: $FOO $1"
-  echo "verbose: $FOO $1"
-  echo "verbose: $FOO $1"
-  echo "verbose: $FOO $1"
-  echo "verbose: $FOO $1"
-fi
+$(dirname $0)/options_passed_on "$@"
 
-echo "end"

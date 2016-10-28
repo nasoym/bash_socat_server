@@ -1,0 +1,28 @@
+#!/bin/bash
+
+echo "$0 arguments before: $@
+"
+
+while getopts ":-:" options; do 
+  unset VALUE
+  if [[ ${!OPTIND} =~ ^-$ ]] || [[ ${!OPTIND} =~ ^[^-] ]];then
+    VALUE=${!OPTIND}; OPTIND=$((OPTIND+1))
+    echo ">>>>>$VALUE<<<<"
+  fi
+  case $options in
+  *) 
+    echo "::::::::::::::::$OPTARG=$VALUE"
+    case "$OPTARG" in
+      f|foo) FOO=$VALUE;;
+      b|boo) BOO=$VALUE;;
+      *) echo "aaaa";;
+esac;; esac; done; shift $((OPTIND-1))
+
+echo "$0 arguments after: $@
+"
+echo "$0 foo:>$FOO<
+ "
+echo "$0 boo:>$BOO<
+ "
+
+
