@@ -1,0 +1,5 @@
+#!/bin/bash
+
+curl -s "http://$REQUEST_HEADER_HOST/info"
+
+echo "$(urlencode a b d %)"
