@@ -7,6 +7,9 @@ while getopts "r:d:" OPTIONS; do case $OPTIONS in
 esac; done; shift $(( OPTIND - 1 ))
 
 read -r REQUEST_METHOD REQUEST_URI REQUEST_HTTP_VERSION
+export REQUEST_METHOD 
+export REQUEST_URI 
+export REQUEST_HTTP_VERSION
 
 . ./read_headers_to_vars.sh
 
@@ -14,7 +17,7 @@ if [[ -n "$REQUEST_HEADER_CONTENT_LENGTH" ]] && [[ "$REQUEST_HEADER_CONTENT_LENG
   read -r -d '' -n "$REQUEST_HEADER_CONTENT_LENGTH" REQUEST_CONTENT
 fi
 
-REQUEST_PATH="${REQUEST_URI/%\?*/}"
+export REQUEST_PATH="${REQUEST_URI/%\?*/}"
 if [[ "${REQUEST_URI}" =~ \? ]]; then
   REQUEST_QUERIES="${REQUEST_URI/#*\?/}"
 fi
@@ -37,7 +40,7 @@ REQUEST_PATH_SEGMENT="${REQUEST_PATH}"
 until [[ -z "$REQUEST_PATH_SEGMENT" ]] ; do
   if [[ -f "${ROUTES_PATH}${REQUEST_PATH_SEGMENT}" ]];then
     MATCHING_ROUTE_FILE="${ROUTES_PATH}${REQUEST_PATH_SEGMENT}"
-    REQUEST_SUBPATH="${REQUEST_PATH/#$REQUEST_PATH_SEGMENT/}"
+    export REQUEST_SUBPATH="${REQUEST_PATH/#$REQUEST_PATH_SEGMENT/}"
     break
   fi
   if [[ "${REQUEST_PATH_SEGMENT}" =~ /$ ]];then
