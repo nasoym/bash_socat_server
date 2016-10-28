@@ -5,6 +5,18 @@ function urldecode() {
   url_encoded="${INPUT//+/ }"
   printf '%b\n' "${url_encoded//%/\\x}"
 }
+export -f urldecode
+
+function urlencode() {
+  echo -n "$@" | while IFS= read -n 1 C; do 
+    case $C in
+        [a-zA-Z0-9.~_-]) printf "$C" ;;
+        *) printf '%%%02X' "'$C" ;; 
+    esac
+  done
+  printf '\n'
+}
+export -f urlencode
 
 while getopts "r:d:" OPTIONS; do case $OPTIONS in
   r) ROUTES_PATH="$OPTARG" ;;
@@ -40,6 +52,7 @@ function echo_response_status_line() {
   STATUS_TEXT=${2-OK}
   echo -e "HTTP/1.0 ${STATUS_CODE} ${STATUS_TEXT}\r"
 }
+export -f echo_response_status_line
 
 function echo_response_default_headers() { 
   # DATE=$(date +"%a, %d %b %Y %H:%M:%S %Z")
@@ -48,6 +61,7 @@ function echo_response_default_headers() {
   echo -e "Server: $(cat version.txt)\r"
   echo -e "Connection: close\r"
 }
+export -f echo_response_default_headers
 
 REQUEST_PATH_SEGMENT="${REQUEST_PATH}"
 until [[ -z "$REQUEST_PATH_SEGMENT" ]] ; do
