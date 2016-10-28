@@ -74,6 +74,12 @@ fi
 
 if [[ -n "$MATCHING_ROUTE_FILE" ]];then
   RESPONSE_CONTENT="$(echo "$REQUEST_CONTENT" | ${MATCHING_ROUTE_FILE} $COMMAND_QUERIES $(urldecode ${REQUEST_SUBPATH//\// }))"
+  if [[ $? -eq 1 ]];then
+    echo_response_status_line 500 "Internal Server Error"
+    echo_response_default_headers
+    echo -e "\r"
+    exit 0
+  fi
   if [[ "$RESPONSE_CONTENT" =~ ^HTTP\/[0-9]+\.[0-9]+\ [0-9]+ ]];then
     echo "${RESPONSE_CONTENT}"
   else
