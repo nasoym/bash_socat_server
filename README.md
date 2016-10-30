@@ -11,5 +11,5 @@ bash scripts and socat.
 
 ## todos / issues /questions
 * avoid injection via request headers
-
+* avoid .. in path in order to avoid executing any files
 

@@ -2,6 +2,8 @@
 
 RESPONSE+="PID: $$
 "
+RESPONSE+="WHOAMI: $(whoami)
+"
 RESPONSE+="$(set | grep SOCAT)
 "
 RESPONSE+="$(set | grep "REQUEST_")
