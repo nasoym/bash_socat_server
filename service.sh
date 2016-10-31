@@ -12,11 +12,14 @@ export REQUEST_METHOD
 export REQUEST_URI 
 export REQUEST_HTTP_VERSION
 
+export REQUEST_HOST="http://${SOCAT_SOCKADDR}:${SOCAT_SOCKPORT}"
+
 . $(dirname $0)/read_headers_to_vars.sh
 
 if [[ -n "$REQUEST_HEADER_CONTENT_LENGTH" ]] && [[ "$REQUEST_HEADER_CONTENT_LENGTH" -gt "0" ]];then
   read -r -d '' -n "$REQUEST_HEADER_CONTENT_LENGTH" REQUEST_CONTENT
 fi
+export REQUEST_CONTENT
 
 export REQUEST_PATH="${REQUEST_URI/%\?*/}"
 if [[ "${REQUEST_URI}" =~ \? ]]; then
