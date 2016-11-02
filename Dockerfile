@@ -13,5 +13,5 @@ ADD example_handlers /handlers
 EXPOSE 8080
 
 ENTRYPOINT ["./run.sh"]
-CMD ["-r /handlers", "-d /handlers/default"]
+CMD ["-s", "-r /handlers", "-d /handlers/default"]
 
