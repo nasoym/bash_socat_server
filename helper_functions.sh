@@ -25,7 +25,7 @@ function echo_response_status_line() {
 }
 export -f echo_response_status_line
 
-export SERVER_VERSION="$(cat $(dirname $0)/version.txt)"
+export SERVER_VERSION="$(cat $(dirname $0)/VERSION)"
 
 function echo_response_default_headers() { 
   # DATE=$(date +"%a, %d %b %Y %H:%M:%S %Z")
