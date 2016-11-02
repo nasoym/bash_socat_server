@@ -13,6 +13,7 @@ sent back to the client.
 * -r <path> : path for route handlers
 * -d <path> : path to default route handler script
 * -v : turn on verbose logging
+* -s : run scripts as user nobody
 
 ## todos / issues /questions
 * avoid injection via request headers
