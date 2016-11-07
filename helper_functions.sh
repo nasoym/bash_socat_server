@@ -25,13 +25,13 @@ function echo_response_status_line() {
 }
 export -f echo_response_status_line
 
-export SERVER_VERSION="$(cat $(dirname $0)/VERSION)"
+export SERVER_VERSION="$(head -n1 $(dirname $0)/VERSION)"
 
 function echo_response_default_headers() { 
   # DATE=$(date +"%a, %d %b %Y %H:%M:%S %Z")
   echo -e "Date: $(date -u "+%a, %d %b %Y %T GMT")\r"
   echo -e "Expires: $(date -u "+%a, %d %b %Y %T GMT")\r"
-  echo -e "Server: $SERVER_VERSION\r"
+  echo -e "Server: Socat Bash Server $SERVER_VERSION\r"
   echo -e "Connection: close\r"
 }
 export -f echo_response_default_headers
