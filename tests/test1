@@ -1,0 +1,65 @@
+#!/usr/bin/expect
+
+set timeout 1
+
+spawn ./service.sh -r ./test_handlers
+send "GET /test http1.0\n"
+send "\n"
+send "\x004"
+
+expect "HTTP/1.0 200 OK"
+expect "Date: "
+# expect "Expires: " { send_user "GGGG\n"; exit } 
+expect "Expires: "
+expect { -re "^Server: " {send_user "uuu\n"; } }
+expect "Connection: "
+expect "Content-Type: "
+expect "Content-Length: "
+
+
+# expect "" { send_user "GGGG\n"; exit } 
+send_user "FFF\n"
+exit 1
+# expect "Date: Mon, 07 Nov 2016 20:50:45 GMT"
+
+
+# expect "HTTP/1.0 200 OK\nDDate";
+# expect -re "^DDate: ";
+# expect -regexp ^Expires:
+# expect "Date: Mon, 07 Nov 2016 20:50:45 GMT"
+
+# expect {
+# # default { send_user "!\n"; exp_continue; }
+# "HTTP/1.0 200 OK" { send_user "1\n"; exp_continue; }
+# # "Date: " { send_user "2\n"; exp_continue; }
+# # "Expires: " { send_user "3\n"; exp_continue; }
+# # "^Server: .*$" { send_user "4\n"; exp_continue; }
+# "Connection: close" { send_user "5\n"; exp_continue; }
+# # "Content-Type: " { send_user "6\n"; exp_continue; }
+# # "Content-Length: " { send_user "7\n"; exp_continue; }
+# }
+
+# expect {
+# "HTTP/1.0 200 OK" { send_user "1\n"; }
+# "Date: " { send_user "3\n"; }
+# "Expires: " { send_user "2\n"; }
+# }
+
+# expect {
+#  "Date: " { send_user "2\n"; exp_continue; }
+# }
+
+
+# Date: Mon, 07 Nov 2016 20:50:45 GMT
+# Expires: Mon, 07 Nov 2016 20:50:45 GMT
+# Server: Socat Bash Server 0.0.3
+# Connection: close
+# Content-Type: text/html
+# Content-Length: 4
+
+# expect {
+# # timeout { send_user "timeout"; exit 1 }
+# # eof { send_user "eof"; exit 1 }
+# # "AAabc" { send_user "fff"; exit 0 }
+# "HTTP/1.0 200 OK" { send_user "foo bar\n" ; exp_continue }
+# }
