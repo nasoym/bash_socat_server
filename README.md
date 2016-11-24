@@ -9,13 +9,8 @@ Based on the request path files are executed and the response is
 sent back to the client.
 
 ## options
-* -p <port number> : port
+* -v : turn on verbose logging to stderr
+* -p <port number> : port (default: 8080)
 * -r <path> : path for route handlers
 * -d <path> : path to default route handler script
-* -v : turn on verbose logging
-* -s : run scripts as user nobody
-
-## todos / issues /questions
-* avoid injection via request headers
-* avoid .. in path in order to avoid executing arbitrary files
 

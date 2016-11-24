@@ -2,7 +2,6 @@
 
 while getopts "d:p:r:vs" OPTIONS; do case $OPTIONS in
   v) VERBOSE_OPTIONS="-vv" ;;
-  s) RUN_AS_NOBODY=1 ;;
   p) PORT="$OPTARG" ;;
   r) ROUTES_PATH="$OPTARG" ;;
   d) DEFAULT_ROUTE_HANDLER="$OPTARG" ;;
@@ -19,12 +18,8 @@ esac; done; shift $(( OPTIND - 1 ))
 : ${ROUTES_PATH_ARGUMENT:=" -r $ROUTES_PATH"}
 : ${DEFAULT_ROUTE_HANDLER_ARGUMENT:=" -d $DEFAULT_ROUTE_HANDLER"}
 
-if [[ "$RUN_AS_NOBODY" -eq 1 ]];then
-  SOCAT_SECURITY_ARGUMENT=",su=nobody" 
-fi
-
 socat \
   $VERBOSE_OPTIONS \
-  TCP-LISTEN:${PORT},reuseaddr,fork${SOCAT_SECURITY_ARGUMENT} \
+  TCP-LISTEN:${PORT},reuseaddr,fork,su=nobody \
   EXEC:"${SERVICE} ${ROUTES_PATH_ARGUMENT} ${DEFAULT_ROUTE_HANDLER_ARGUMENT}"
 
