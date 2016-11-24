@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ef -o pipefail
 
 while getopts "d:p:r:vs" OPTIONS; do case $OPTIONS in
   v) VERBOSE_OPTIONS="-vv" ;;

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ef -o pipefail
 
 . $(dirname $0)/helper_functions.sh
 
