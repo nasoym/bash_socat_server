@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:edge
 MAINTAINER Sinan Goo
 
 RUN apk update && apk upgrade
