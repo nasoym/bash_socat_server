@@ -1,8 +1,8 @@
 FROM alpine:edge
 MAINTAINER Sinan Goo
+LABEL type="request_container"
 
-RUN apk update && apk upgrade
-RUN apk --no-cache add socat bash
+RUN apk update && apk --no-cache add socat bash
 
 WORKDIR /socat_server
 
