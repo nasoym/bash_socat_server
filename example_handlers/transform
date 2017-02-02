@@ -1,4 +1,0 @@
-#!/bin/bash
-
-sed -e "s/^/>: /g" -e "s/\$/ ${REQUEST_SUBPATH//\//}/g"
-
